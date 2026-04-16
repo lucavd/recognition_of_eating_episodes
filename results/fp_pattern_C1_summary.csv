@@ -1,0 +1,12 @@
+metric,value
+Total non-eating IUs,19029
+False positives (FP),5753
+"FP rate (1 - specificity, IU-pooled)",0.302
+FP adjacent to eating ±1 IU (%),17.5
+TN adjacent to eating ±1 IU (%),9
+"Boundary enrichment (FP vs TN, ±1 IU)",1.95
+FP adjacent to eating ±2 IU (%),29.8
+TN adjacent to eating ±2 IU (%),19.4
+"Boundary enrichment (FP vs TN, ±2 IU)",1.54
+Isolated FP (not within ±10 s of any eating) (%),70.2
+Chi-square p-value (boundary ±1),<2e-16

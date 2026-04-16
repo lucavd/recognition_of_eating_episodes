@@ -1,0 +1,13 @@
+type,n
+axis cross-correlation,3
+categorical (arm) dummy,1
+categorical (food) dummy,12
+categorical (meal) dummy,3
+slope (window regression),7
+window statistic: CV,7
+window statistic: IQR,7
+window statistic: SD,7
+window statistic: max,7
+window statistic: mean,7
+window statistic: median,7
+window statistic: min,7

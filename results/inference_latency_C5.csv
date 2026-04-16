@@ -1,0 +1,8 @@
+metric,value
+Model file size (kB),3742.5
+"Single-IU latency (median, µs)",4631.5
+"Single-IU latency (mean, µs)",4871.2
+"Single-IU latency (95th pct, µs)",7262.8
+"Batch 1000 IU latency (median, ms)",11.73
+"Per-IU latency in batch (median, µs)",11.7
+"Throughput (IU / second, from batch median)",85280
