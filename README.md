@@ -1,6 +1,6 @@
 # Recognition of Eating Episodes via Commercial Smartwatch Sensors Analysis
 
-<a href="https://doi.org/10.5281/zenodo.19615761"><img src="https://zenodo.org/badge/1212836200.svg" alt="DOI"></a>
+[![DOI](https://zenodo.org/badge/1212836200.svg)](https://doi.org/10.5281/zenodo.19615761)
 
 Companion repository for the manuscript submitted to *PLOS Digital Health* (PDIG-D-26-00312).
 
