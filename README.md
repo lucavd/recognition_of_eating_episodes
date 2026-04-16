@@ -1,5 +1,7 @@
 # Recognition of Eating Episodes via Commercial Smartwatch Sensors Analysis
 
+<a href="https://doi.org/10.5281/zenodo.19615761"><img src="https://zenodo.org/badge/1212836200.svg" alt="DOI"></a>
+
 Companion repository for the manuscript submitted to *PLOS Digital Health* (PDIG-D-26-00312).
 
 This repository contains the derived datasets, per-subject results, bootstrap confidence intervals, analysis scripts, and supplementary figures needed to reproduce all tables, figures and statistics reported in the paper. The raw 5 Hz sensor streams and video-derived eating labels are publicly available through the [`denotion`](https://github.com/UBESP-DCTV/denotion) R package.
