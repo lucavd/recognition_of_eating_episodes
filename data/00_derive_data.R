@@ -117,8 +117,8 @@ run_pipeline <- function(data, window_size, stride = 5, do_filter = FALSE) {
   segments <- data |> group_by(subject, meal, food) |> group_split()
   iu_list <- lapply(segments, function(sg) make_iu(sg, window_size, stride, do_filter))
   iu <- bind_rows(Filter(Negate(is.null), iu_list))
-  iu$EU <- factor(ifelse(iu$prop_eating_union > 0.5, "eating", "non_eating"))
-  iu$EI <- factor(ifelse(iu$prop_eating_intersect > 0.5, "eating", "non_eating"))
+  iu$EU <- as.integer(iu$prop_eating_union > 0.5)
+  iu$EI <- as.integer(iu$prop_eating_intersect > 0.5)
   iu$delta_s <- window_size / 5
   iu$prop_eating_union <- NULL
   iu$prop_eating_intersect <- NULL
@@ -141,6 +141,7 @@ for (ds in 1:5) {
       round(difftime(Sys.time(), t0, units = "mins"), 1), "min\n")
 }
 dat_all <- bind_rows(dat_list)
+dat_all$ID <- seq_len(nrow(dat_all))
 
 saveRDS(dat_all, file.path(OUT, "dat_all.rds"))
 cat("  Saved:", file.path(OUT, "dat_all.rds"), "(", nrow(dat_all), "total IUs )\n\n")
@@ -191,5 +192,5 @@ dat5 <- dat_all[dat_all$delta_s == 5, ]
 cat("Subjects:", paste(sort(unique(dat5$subject)), collapse = ", "), "\n")
 cat("Total IUs (all delta_s):", nrow(dat_all), "\n")
 cat("IUs (delta_s=5):", nrow(dat5), "\n")
-cat("Eating prevalence (EU, delta_s=5):", round(mean(dat5$EU == "eating") * 100, 1), "%\n")
+cat("Eating prevalence (EU, delta_s=5):", round(mean(dat5$EU) * 100, 1), "%\n")
 cat("Columns:", ncol(dat_all), "\n")
