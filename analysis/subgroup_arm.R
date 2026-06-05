@@ -104,9 +104,9 @@ print(as.data.frame(diff_tbl |>
                         diff, ci_low, ci_high, p_two_sided)) |>
   select(metric, cell)))
 
-write_csv(per_arm,  file.path(OUT, "subgroup_arm_C2.csv"))
-write_csv(diff_tbl, file.path(OUT, "subgroup_arm_diff_C2.csv"))
+write_csv(per_arm,  file.path(OUT, "subgroup_arm.csv"))
+write_csv(diff_tbl, file.path(OUT, "subgroup_arm_diff.csv"))
 
 cat("\nSaved:\n",
-    " -", file.path(OUT, "subgroup_arm_C2.csv"),      "\n",
-    " -", file.path(OUT, "subgroup_arm_diff_C2.csv"), "\n")
+    " -", file.path(OUT, "subgroup_arm.csv"),      "\n",
+    " -", file.path(OUT, "subgroup_arm_diff.csv"), "\n")

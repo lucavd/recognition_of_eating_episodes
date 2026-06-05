@@ -1,12 +1,12 @@
 # ---------------------------------------------------------------------------
 # C1 — False-positive pattern analysis for XGBoost (tuned), v2.
 #
-# This version replaces the earlier fp_pattern_C1.R (which read
+# This version replaces the earlier fp_pattern.R (which read
 # results/paper_figures_data.rds, producing predictions
 # whose aggregate mean specificity was 0.804 — not matching Table 2's 0.692).
 #
 # v2 regenerates LOSO predictions from scratch using the SAME pipeline as
-# loso_C10.R unfiltered (the pipeline whose per-subject specificity mean of
+# loso_filter.R unfiltered (the pipeline whose per-subject specificity mean of
 # 0.689 matches Table 2's 0.692 within stochastic tolerance). Specifically:
 #   - dataset:   iu_features_unfiltered.rds   (26,058 IU, 19 subjects)
 #   - recipe:    step_rm(subject) → step_dummy → step_zv → step_normalize
@@ -14,10 +14,10 @@
 #                scale_pos_weight = non_eating/eating (per fold)
 #   - LOSO loop over 19 subjects (subject 02 already excluded)
 #
-# Outputs (manuscript/review/outputs/):
-#   - fp_pattern_C1_predictions.rds       IU-level predictions (subject, EU, .pred_class)
-#   - fp_pattern_C1_per_subject.csv       per-subject FP counts (overwrites v1)
-#   - fp_pattern_C1_summary.csv           aggregate summary (overwrites v1)
+# Outputs (results/):
+#   - fp_pattern_predictions.rds       IU-level predictions (subject, EU, .pred_class)
+#   - fp_pattern_per_subject.csv       per-subject FP counts (overwrites v1)
+#   - fp_pattern_summary.csv           aggregate summary (overwrites v1)
 # ---------------------------------------------------------------------------
 
 suppressPackageStartupMessages({
@@ -101,7 +101,7 @@ preds <- bind_rows(preds_all) |>
   mutate(row_pos = row_number()) |>
   ungroup()
 
-saveRDS(preds, file.path(OUT, "fp_pattern_C1_predictions.rds"))
+saveRDS(preds, file.path(OUT, "fp_pattern_predictions.rds"))
 
 # --- Type + boundary flags -------------------------------------------------
 preds <- preds |>
@@ -177,7 +177,7 @@ per_subj_fp <- preds |>
             fp_rate   = n_fp / n_non_eat,
             fp_b1_frac_of_fp = n_fp_b1 / pmax(n_fp, 1),
             .groups   = "drop")
-write_csv(per_subj_fp, file.path(OUT, "fp_pattern_C1_per_subject.csv"))
+write_csv(per_subj_fp, file.path(OUT, "fp_pattern_per_subject.csv"))
 
 summary_out <- tibble(
   metric = c("Total non-eating IUs",
@@ -202,9 +202,9 @@ summary_out <- tibble(
             round(as.numeric(fp_iso$pct_iso), 1),
             format.pval(ct1$p.value, digits = 2))
 )
-write_csv(summary_out, file.path(OUT, "fp_pattern_C1_summary.csv"))
+write_csv(summary_out, file.path(OUT, "fp_pattern_summary.csv"))
 
 cat("\nSaved:\n",
-    " -", file.path(OUT, "fp_pattern_C1_predictions.rds"), "\n",
-    " -", file.path(OUT, "fp_pattern_C1_per_subject.csv"), "\n",
-    " -", file.path(OUT, "fp_pattern_C1_summary.csv"), "\n")
+    " -", file.path(OUT, "fp_pattern_predictions.rds"), "\n",
+    " -", file.path(OUT, "fp_pattern_per_subject.csv"), "\n",
+    " -", file.path(OUT, "fp_pattern_summary.csv"), "\n")

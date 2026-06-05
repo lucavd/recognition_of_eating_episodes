@@ -51,8 +51,9 @@ test_that("dat_all.rds delta_s=5 subset has expected size", {
 # ── Test 2: Validate against original dat_all.rds if available ───────────────
 
 test_that("derived data matches original dat_all.rds within tolerance", {
-  orig_path <- "/Users/utente/Documents/Projects/2024.dare/data/dat_all.rds"
-  skip_if_not(file.exists(orig_path), "Original dat_all.rds not found, skipping comparison")
+  orig_path <- Sys.getenv("ORIG_DAT_ALL", "")
+  skip_if_not(nzchar(orig_path) && file.exists(orig_path),
+    "Reference dat_all.rds not provided (set ORIG_DAT_ALL), skipping comparison")
 
   orig <- readRDS(orig_path)
   derived <- readRDS(here("data", "dat_all.rds"))
@@ -148,15 +149,6 @@ test_that("all R scripts in analysis/ parse without errors", {
   }
 })
 
-test_that("all R scripts in revision/ parse without errors", {
-  scripts <- list.files(here("revision"), pattern = "\\.R$",
-    recursive = TRUE, full.names = TRUE)
-  for (s in scripts) {
-    expect_error(parse(s), NA,
-      info = paste("Syntax error in", basename(s)))
-  }
-})
-
 # ── Test 6: All results CSVs are valid ───────────────────────────────────────
 
 test_that("all CSV files in results/ are readable", {
@@ -177,10 +169,7 @@ test_that("all CSV files in results/ are readable", {
 # ── Test 7: Path consistency ─────────────────────────────────────────────────
 
 test_that("no scripts reference old analysis_paper_2026 path", {
-  all_R <- c(
-    list.files(here("analysis"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE),
-    list.files(here("revision"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
-  )
+  all_R <- list.files(here("analysis"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
   for (f in all_R) {
     content <- readLines(f, warn = FALSE)
     hits <- grep("analysis_paper_2026", content)
@@ -190,10 +179,7 @@ test_that("no scripts reference old analysis_paper_2026 path", {
 })
 
 test_that("no scripts have hardcoded /Users/ paths", {
-  all_R <- c(
-    list.files(here("analysis"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE),
-    list.files(here("revision"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
-  )
+  all_R <- list.files(here("analysis"), pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
   for (f in all_R) {
     content <- readLines(f, warn = FALSE)
     # Exclude comments

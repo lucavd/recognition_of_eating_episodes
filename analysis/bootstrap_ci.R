@@ -69,7 +69,7 @@ dl <- read_csv(DEEP_CSV, show_col_types = FALSE) |>
   filter(subject != "02") |>   # 02 left-handed, excluded elsewhere in the paper
   select(subject, model, sens, spec, bal_acc, auc)
 
-# --- 3b. LR + DT (baseline) from loso_lr_dt_B5.R -----------------------------
+# --- 3b. LR + DT (baseline) from loso_lr_dt.R -----------------------------
 
 LRDT_CSV <- file.path(OUT, "per_subject_lr_dt.csv")
 if (file.exists(LRDT_CSV)) {

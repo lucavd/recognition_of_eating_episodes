@@ -12,8 +12,8 @@
 # channel vs time, and the three axis cross-correlations. Each window is
 # labelled with the >50% majority rule on the raw eating_union labels.
 #
-# Output: manuscript/review/outputs/iu_features_filtered.rds
-#         manuscript/review/outputs/iu_features_unfiltered.rds
+# Output: data/iu_features_filtered.rds
+#         data/iu_features_unfiltered.rds
 # ---------------------------------------------------------------------------
 
 suppressPackageStartupMessages({

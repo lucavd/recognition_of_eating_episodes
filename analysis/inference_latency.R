@@ -111,5 +111,5 @@ summary_out <- tibble(
 cat("=== Benchmark summary (host CPU, nthread=1) ===\n")
 print(as.data.frame(summary_out), row.names = FALSE)
 
-write_csv(summary_out, file.path(OUT, "inference_latency_C5.csv"))
-cat("\nSaved:", file.path(OUT, "inference_latency_C5.csv"), "\n")
+write_csv(summary_out, file.path(OUT, "inference_latency.csv"))
+cat("\nSaved:", file.path(OUT, "inference_latency.csv"), "\n")

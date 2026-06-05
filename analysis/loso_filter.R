@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
 # C10 — LOSO XGBoost (tuned) on the filtered and unfiltered IU datasets
-# built by feature_eng_C10.R. Subject 02 is excluded. Cluster-bootstrap
+# built by feature_eng_filter.R. Subject 02 is excluded. Cluster-bootstrap
 # 95% CIs (B = 1000, seed = 1812) on sens, spec, bal_acc and AUC for both
 # pipelines, and a paired cluster-bootstrap comparison of the filtered
 # vs unfiltered per-subject metrics.
@@ -103,7 +103,7 @@ per_subj_unf <- loso_run(iu_unf, "unfiltered")
 per_subj_flt <- loso_run(iu_flt, "filtered")
 
 per_subj <- bind_rows(per_subj_unf, per_subj_flt)
-write_csv(per_subj, file.path(OUT, "per_subject_C10.csv"))
+write_csv(per_subj, file.path(OUT, "per_subject_filter.csv"))
 
 # --- Cluster bootstrap 95% CI (marginal) -----------------------------------
 set.seed(1812)
@@ -131,8 +131,8 @@ ci_pretty <- ci_tbl |>
   pivot_wider(names_from = metric, values_from = cell) |>
   dplyr::select(pipeline, sens, spec, bal_acc, auc)
 
-write_csv(ci_pretty, file.path(OUT, "ci_C10_pretty.csv"))
-write_csv(ci_tbl,    file.path(OUT, "ci_C10.csv"))
+write_csv(ci_pretty, file.path(OUT, "filter_ablation_ci_pretty.csv"))
+write_csv(ci_tbl,    file.path(OUT, "filter_ablation_ci.csv"))
 
 cat("\n=== Marginal 95% CI ===\n")
 print(as.data.frame(ci_pretty), row.names = FALSE)
@@ -162,7 +162,7 @@ paired <- map_dfr(metrics, function(m) {
                                 mean(reps < 0, na.rm = TRUE)))
 })
 
-write_csv(paired, file.path(OUT, "paired_C10.csv"))
+write_csv(paired, file.path(OUT, "filter_ablation_paired.csv"))
 
 cat("\n=== Paired bootstrap filtered − unfiltered ===\n")
 print(as.data.frame(paired |>
@@ -172,7 +172,7 @@ print(as.data.frame(paired |>
   row.names = FALSE)
 
 cat("\nSaved:\n",
-    " -", file.path(OUT, "per_subject_C10.csv"), "\n",
-    " -", file.path(OUT, "ci_C10_pretty.csv"),    "\n",
-    " -", file.path(OUT, "ci_C10.csv"),           "\n",
-    " -", file.path(OUT, "paired_C10.csv"),       "\n")
+    " -", file.path(OUT, "per_subject_filter.csv"), "\n",
+    " -", file.path(OUT, "filter_ablation_ci_pretty.csv"),    "\n",
+    " -", file.path(OUT, "filter_ablation_ci.csv"),           "\n",
+    " -", file.path(OUT, "filter_ablation_paired.csv"),       "\n")

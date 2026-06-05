@@ -7,7 +7,7 @@
 # For a paired within-subjects design at alpha = 0.05 and power = 0.80,
 # MDE ≈ (t_{alpha/2, N-1} + t_{power, N-1}) * SD / sqrt(N).
 #
-# Output: manuscript/review/outputs/mde_C3.csv
+# Output: results/bootstrap/mde.csv
 # ---------------------------------------------------------------------------
 
 suppressPackageStartupMessages({
@@ -48,6 +48,6 @@ table_wide <- res |>
 cat("\n=== Minimum detectable effect (alpha = 0.05, power = 0.80) ===\n")
 print(as.data.frame(table_wide), row.names = FALSE)
 
-write_csv(table_wide, file.path(OUT, "mde_C3.csv"))
+write_csv(table_wide, file.path(OUT, "mde.csv"))
 
-cat("\nSaved:", file.path(OUT, "mde_C3.csv"), "\n")
+cat("\nSaved:", file.path(OUT, "mde.csv"), "\n")
