@@ -13,7 +13,7 @@
 #     (arm/menu, meal, food), keeping the 59 motion-derived predictors.
 #
 # Selection metric: sensitivity (matches original 09_hyperparameter_tuning).
-# Grids / specs: identical to analysis_paper_2026/09_hyperparameter_tuning_optimized.R.
+# Grids / specs: identical to the original Phase-9 hyperparameter-tuning script.
 # Inner selection: tune_grid (full 15-pt Latin-hypercube) rather than racing.
 # Bootstrap: subject-level cluster bootstrap, B = 1000, seed = 1812 (as Table 2).
 #

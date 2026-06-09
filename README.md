@@ -24,7 +24,7 @@ Eleven classifiers were evaluated: Logistic Regression, Decision Tree, Random Fo
 
 95% CIs by subject-level cluster bootstrap (B = 1000, seed = 1812) over 19 LOSO folds. Full results in `results/bootstrap/bootstrap_ci.csv`.
 
-The headline performance quoted in the text is the **sensor-only** XGBoost (the 59 motion-derived predictors, with the study-arm, meal and food variables removed, as an autonomous watch would have no menu information at prediction time): balanced accuracy 0.639 [0.607, 0.668], AUC 0.699 [0.653, 0.743], sensitivity 0.594 [0.528, 0.663], specificity 0.683 [0.630, 0.732]. A fully nested subject-level cross-validation confirms the post-selection estimates above (the nested and post-selection balanced accuracies differ by at most 0.005 for the tuned tree models), and the Transformer sensitivity advantage over tuned XGBoost is not statistically significant once the decision threshold is selected by nested cross-validation and the comparisons are adjusted for multiplicity. These analyses live in `results/bootstrap/` (`nested_loso_*`, `deep_nested_*`, `lr_dt_sensor_only_*`, `pairwise_*`) and `results/agreement/kappa_bounds.csv`.
+The headline performance quoted in the text is the **sensor-only** XGBoost (the 59 motion-derived predictors, with the study-arm, meal and food variables removed, as an autonomous watch would have no menu information at prediction time): balanced accuracy 0.639 [0.607, 0.668], AUC 0.699 [0.653, 0.743], sensitivity 0.594 [0.528, 0.663], specificity 0.683 [0.630, 0.732]. A fully nested subject-level cross-validation confirms the post-selection estimates above (the nested and post-selection balanced accuracies differ by at most 0.005 for the tuned tree models), and the Transformer sensitivity advantage over tuned XGBoost is not statistically significant once the decision threshold is selected by nested cross-validation and the comparisons are adjusted for multiplicity. These analyses live in `results/bootstrap/` (`nested_loso_*`, `deep_nested_*`, `lr_dt_sensor_only_*`, `pairwise_*`) and `results/agreement/inter_rater_exact.csv`.
 
 ---
 
@@ -36,6 +36,7 @@ recognition_of_eating_episodes/
 +-- data/                           Data derivation
 |   +-- 00_derive_data.R            Derives all datasets from the public denotion package
 |   +-- feature_list.csv            75 predictor names fed to ML classifiers (Table 2)
+|   +-- rater_streams.rds           Two evaluators' per-frame (5 Hz) eating streams, 19 subjects (S5 Table Panel A; S2 Appendix Table S2.4)
 |   |
 |   | After running 00_derive_data.R, the following files are generated:
 |   +-- dat_all.rds                 Main IU feature matrix (delta_s = 1-5 s, 19 subjects)
@@ -66,7 +67,7 @@ recognition_of_eating_episodes/
 |   +-- lgb_tuned_per_subject.R     LightGBM tuned per-subject metrics (Table 2)
 |   +-- loso_timeframe.R            Window-size sensitivity under LOSO (S3 Table)
 |   +-- xgb_tuned_EI.R              XGBoost tuned on the Eating Intersect target (S5 Table, Panel B)
-|   +-- kappa_bounds.R              Inter-rater agreement: exact percent agreement + kappa interval (S5 Table Panel A; S2 Appendix Table S2.4)
+|   +-- inter_rater_exact.R         Inter-rater agreement: actual 2x2 + exact Cohen's kappa, IU and raw-frame (S5 Table Panel A; S2 Appendix Table S2.4)
 |   +-- feature_eng_filter.R        Feature engineering for the filter ablation (S6 Table)
 |   +-- loso_filter.R               LOSO filter-vs-no-filter comparison (S6 Table)
 |   +-- fp_pattern.R                False-positive pattern analysis (Discussion)
@@ -114,8 +115,8 @@ recognition_of_eating_episodes/
 |   |   +-- pairwise_nested_adjusted.csv      Full multiplicity-adjusted pairwise matrix (S2 Appendix Table S2.3)
 |   |   +-- pairwise_vs_xgb_tuned.csv         Comparisons against tuned XGBoost (S2 Appendix Table S2.3)
 |   +-- agreement/                  Inter-rater reliability
-|   |   +-- per_subject_agreement.csv  Per-subject percent agreement and kappa
-|   |   +-- kappa_bounds.csv           Exact percent agreement + kappa interval, IU and raw-frame levels (S5 Table; S2 Appendix Table S2.4)
+|   |   +-- per_subject_agreement.csv  Per-subject exact percent agreement and kappa (IU level)
+|   |   +-- inter_rater_exact.csv       Actual 2x2 + exact Cohen's kappa, IU and raw-frame levels (S5 Table; S2 Appendix Table S2.4)
 |   +-- subgroup_arm.csv            Menu A vs B stratified metrics (Section 3.6)
 |   +-- subgroup_arm_diff.csv       Between-menu bootstrap differences (Section 3.6)
 |   +-- fp_pattern_per_subject.csv  Per-subject false-positive analysis (Discussion)
@@ -189,7 +190,7 @@ pip install torch numpy pandas scikit-learn
    ```r
    source("analysis/nested_loso.R")         # Nested LOSO, full and sensor-only (Tables S2.1, S2.2)
    source("analysis/lr_dt_sensor_only.R")   # LR/DT full vs sensor-only (Table S2.2)
-   source("analysis/kappa_bounds.R")        # Inter-rater agreement bounds (Table S2.4)
+   source("analysis/inter_rater_exact.R")   # Inter-rater agreement: actual 2x2 + exact kappa (Table S2.4)
    source("analysis/pairwise_multiplicity.R")  # Multiplicity-adjusted comparisons (Table S2.3)
    ```
    ```bash
@@ -218,7 +219,9 @@ data("denotion", package = "denotion")       # nested raw time-series per window
 data("denotion_beta", package = "denotion")   # slope coefficients per IU
 ```
 
-The `denotion` dataset contains the raw 5 Hz samples (acc_x/y/z, pitch, roll, power, total_energy) nested by subject, meal, and window size, with frame-level eating_union and eating_intersect labels from two independent video raters. The two raters' individual label streams were not retained when these public labels were constructed: only the eating-union (labelled eating by at least one rater) and eating-intersect (labelled eating by both) summaries are available. `analysis/kappa_bounds.R` reads this dataset directly from the package to derive the raw-frame agreement.
+The `denotion` dataset contains the raw 5 Hz samples (acc_x/y/z, pitch, roll, power, total_energy) nested by subject, meal, and window size, with frame-level eating_union (labelled eating by at least one rater) and eating_intersect (labelled eating by both) labels from two independent video raters.
+
+**`data/rater_streams.rds`** (provided): the two evaluators' separate per-frame (5 Hz) eating indicators, recovered from the original NOTION labelling pipeline and reconstructed with the project's own labelling rule. Columns: `subject`, `meal`, `video_time`, `eat_rater1` (the more inclusive evaluator), `eat_rater2` (the more conservative evaluator), `eating_union`, `eating_intersect`; 19 subjects, 133,040 frames (the frames that enter at least one Information Unit). The reconstruction is verified exactly: `eat_rater1 | eat_rater2` reproduces `eating_union` with no discrepancy, and the Information Unit windowing in `analysis/inter_rater_exact.R` reproduces `dat_all.rds` exactly (26,304 IUs, identical eating_union / eating_intersect prevalences). `analysis/inter_rater_exact.R` uses this file to report the actual rater-by-rater 2x2 table and the exact Cohen's kappa at the Information Unit and raw-frame levels.
 
 ### Derived data (this repository)
 
@@ -242,12 +245,12 @@ All derived datasets are generated by `data/00_derive_data.R` from the public [`
 | S2 Table (architectures) | described in text | -- |
 | S3 Table (window-size sensitivity) | `analysis/loso_timeframe.R` | `results/bootstrap/timeframe_ci.csv` |
 | S4 Table (feature list) | preprocessing recipe | `data/feature_list.csv` |
-| S5 Table (inter-rater reliability + EI) | `analysis/kappa_bounds.R` (Panel A), `analysis/xgb_tuned_EI.R` (Panel B) | `results/agreement/`, `results/bootstrap/xgb_tuned_EI_ci.csv` |
+| S5 Table (inter-rater reliability + EI) | `analysis/inter_rater_exact.R` (Panel A), `analysis/xgb_tuned_EI.R` (Panel B) | `results/agreement/`, `results/bootstrap/xgb_tuned_EI_ci.csv` |
 | S6 Table (filter ablation) | `analysis/feature_eng_filter.R`, `analysis/loso_filter.R` | `results/bootstrap/filter_ablation_ci.csv`, `filter_ablation_paired.csv` |
 | S2 Appendix Table S2.1 (nested LOSO) | `analysis/nested_loso.R`, `analysis/deep_nested_threshold.py` | `results/bootstrap/nested_loso_*.csv`, `deep_nested_*.csv` |
 | S2 Appendix Table S2.2 (sensor-only ablation) | `analysis/nested_loso.R`, `analysis/lr_dt_sensor_only.R` | `results/bootstrap/nested_loso_*.csv`, `lr_dt_sensor_only_*.csv` |
 | S2 Appendix Table S2.3 (multiplicity-adjusted comparisons) | `analysis/pairwise_multiplicity.R` | `results/bootstrap/pairwise_nested_adjusted.csv`, `pairwise_vs_xgb_tuned.csv` |
-| S2 Appendix Table S2.4 (inter-rater bounds) | `analysis/kappa_bounds.R` | `results/agreement/kappa_bounds.csv` |
+| S2 Appendix Table S2.4 (inter-rater agreement) | `analysis/inter_rater_exact.R` | `results/agreement/inter_rater_exact.csv` |
 | S2 Appendix Table S2.5 (meal-blocked few-shot) | `analysis/06_fewshot_calibration.R` | `results/fewshot_blocked_summary.csv`, `fewshot_blocked_per_subject.csv` |
 | S1 Fig (per-subject sensitivity) | `analysis/11_paper_figures.R` | `figures/S1_Fig_per_subject_sensitivity.tiff` |
 | Fig 1 (study flowchart) | -- | separate file (author-created) |
