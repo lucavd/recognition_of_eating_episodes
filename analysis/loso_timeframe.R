@@ -176,7 +176,7 @@ feat_df <- tibble(feature = feature_names,
                   type    = classify_feature(feature_names))
 feat_counts <- feat_df |> count(type, name = "n")
 print(feat_counts)
-write_csv(feat_df,     file.path(OUT, "feature_list.csv"))
+# feature_list.csv is produced canonically by data/00_derive_data.R (S4 Table); only feature_counts.csv is written here
 write_csv(feat_counts, file.path(OUT, "feature_counts.csv"))
 
 cat("\nSaved:\n",
@@ -184,5 +184,4 @@ cat("\nSaved:\n",
     " -", file.path(OUT, "timeframe_summary.csv"),         "\n",
     " -", file.path(OUT, "timeframe_ci.csv"),              "\n",
     " -", file.path(OUT, "loso_timeframe_results.rds"),    "\n",
-    " -", file.path(OUT, "feature_list.csv"),              "\n",
     " -", file.path(OUT, "feature_counts.csv"),            "\n")

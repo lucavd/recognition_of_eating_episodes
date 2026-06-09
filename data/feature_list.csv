@@ -7,54 +7,70 @@ slope,roll
 slope,power
 slope,total_energy
 mean,mean_acc_x_right
-mean,med_acc_x_right
-mean,min_acc_x_right
-mean,max_acc_x_right
-mean,iqr_acc_x_right
-mean,sd_acc_x_right
-mean,cv_acc_x_right
-median,mean_acc_y_right
+mean,mean_acc_y_right
+mean,mean_acc_z_right
+mean,mean_pitch_right
+mean,mean_roll_right
+mean,mean_power_right
+mean,mean_total_energy_right
+median,med_acc_x_right
 median,med_acc_y_right
-median,min_acc_y_right
-median,max_acc_y_right
-median,iqr_acc_y_right
-median,sd_acc_y_right
-median,cv_acc_y_right
-minimum,mean_acc_z_right
-minimum,med_acc_z_right
+median,med_acc_z_right
+median,med_pitch_right
+median,med_roll_right
+median,med_power_right
+median,med_total_energy_right
+minimum,min_acc_x_right
+minimum,min_acc_y_right
 minimum,min_acc_z_right
-minimum,max_acc_z_right
-minimum,iqr_acc_z_right
-minimum,sd_acc_z_right
-minimum,cv_acc_z_right
-maximum,mean_pitch_right
-maximum,med_pitch_right
-maximum,min_pitch_right
+minimum,min_pitch_right
+minimum,min_roll_right
+minimum,min_power_right
+minimum,min_total_energy_right
+maximum,max_acc_x_right
+maximum,max_acc_y_right
+maximum,max_acc_z_right
 maximum,max_pitch_right
-maximum,iqr_pitch_right
-maximum,sd_pitch_right
-maximum,cv_pitch_right
-IQR,mean_roll_right
-IQR,med_roll_right
-IQR,min_roll_right
-IQR,max_roll_right
+maximum,max_roll_right
+maximum,max_power_right
+maximum,max_total_energy_right
+IQR,iqr_acc_x_right
+IQR,iqr_acc_y_right
+IQR,iqr_acc_z_right
+IQR,iqr_pitch_right
 IQR,iqr_roll_right
-IQR,sd_roll_right
-IQR,cv_roll_right
-SD,mean_power_right
-SD,med_power_right
-SD,min_power_right
-SD,max_power_right
-SD,iqr_power_right
+IQR,iqr_power_right
+IQR,iqr_total_energy_right
+SD,sd_acc_x_right
+SD,sd_acc_y_right
+SD,sd_acc_z_right
+SD,sd_pitch_right
+SD,sd_roll_right
 SD,sd_power_right
-SD,cv_power_right
-CV,mean_total_energy_right
-CV,med_total_energy_right
-CV,min_total_energy_right
-CV,max_total_energy_right
-CV,iqr_total_energy_right
-CV,sd_total_energy_right
+SD,sd_total_energy_right
+CV,cv_acc_x_right
+CV,cv_acc_y_right
+CV,cv_acc_z_right
+CV,cv_pitch_right
+CV,cv_roll_right
+CV,cv_power_right
 CV,cv_total_energy_right
-cross-correlation,cor_xy
-cross-correlation,cor_yz
-cross-correlation,cor_zx
+axis cross-correlation,cor_xy
+axis cross-correlation,cor_yz
+axis cross-correlation,cor_zx
+categorical (arm) dummy,arm_b
+categorical (meal) dummy,meal_X02
+categorical (meal) dummy,meal_X03
+categorical (meal) dummy,meal_X04
+categorical (food) dummy,food_X02
+categorical (food) dummy,food_X03
+categorical (food) dummy,food_X04
+categorical (food) dummy,food_X05
+categorical (food) dummy,food_X06
+categorical (food) dummy,food_X07
+categorical (food) dummy,food_X08
+categorical (food) dummy,food_X09
+categorical (food) dummy,food_X10
+categorical (food) dummy,food_X11
+categorical (food) dummy,food_X12
+categorical (food) dummy,food_X13

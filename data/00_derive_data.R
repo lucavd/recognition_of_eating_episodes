@@ -11,8 +11,8 @@
 #
 # Outputs (saved to data/):
 #   dat_all.rds               Main IU feature matrix (delta_s = 1-5 s, 19 subjects)
-#   iu_features_unfiltered.rds  Same pipeline, for S7 Table ablation
-#   iu_features_filtered.rds    With Butterworth 0.3 Hz, for S7 Table ablation
+#   iu_features_unfiltered.rds  Same pipeline, for S6 Table ablation
+#   iu_features_filtered.rds    With Butterworth 0.3 Hz, for S6 Table ablation
 #   feature_list.csv            75 predictor names
 #
 # Runtime: ~5 minutes on a modern laptop.
@@ -146,14 +146,14 @@ dat_all$ID <- seq_len(nrow(dat_all))
 saveRDS(dat_all, file.path(OUT, "dat_all.rds"))
 cat("  Saved:", file.path(OUT, "dat_all.rds"), "(", nrow(dat_all), "total IUs )\n\n")
 
-# ── 5. Filter ablation datasets (S7 Table) ─────────────────────────────────
+# ── 5. Filter ablation datasets (S6 Table) ─────────────────────────────────
 
-cat("Building unfiltered IU features (S7 Table)...\n")
+cat("Building unfiltered IU features (S6 Table)...\n")
 t0 <- Sys.time()
 iu_unf <- run_pipeline(raw19, window_size = 25, stride = 5, do_filter = FALSE)
 cat("  ", nrow(iu_unf), "IUs in", round(difftime(Sys.time(), t0, units = "mins"), 1), "min\n")
 
-cat("Building filtered IU features (Butterworth 0.3 Hz, S7 Table)...\n")
+cat("Building filtered IU features (Butterworth 0.3 Hz, S6 Table)...\n")
 t0 <- Sys.time()
 iu_flt <- run_pipeline(raw19, window_size = 25, stride = 5, do_filter = TRUE)
 cat("  ", nrow(iu_flt), "IUs in", round(difftime(Sys.time(), t0, units = "mins"), 1), "min\n")
@@ -164,23 +164,33 @@ cat("  Saved: iu_features_unfiltered.rds, iu_features_filtered.rds\n\n")
 
 # ── 6. Feature list (S4 Table) ─────────────────────────────────────────────
 
-feature_names <- c(
-  channels,
-  as.vector(outer(
-    c("mean_", "med_", "min_", "max_", "iqr_", "sd_", "cv_"),
-    paste0(channels, "_right"),
-    paste0
-  )),
-  "cor_xy", "cor_yz", "cor_zx"
+# 75 predictors documented in S4 Table: 59 motion-derived (7 slopes + 49
+# right-wrist window statistics + 3 axis cross-correlations) plus the 16
+# categorical dummies created by the modelling recipe (1 arm, 3 meal, 12 food).
+stat_defs <- list(
+  c("mean",    "mean_"), c("median", "med_"), c("minimum", "min_"),
+  c("maximum", "max_"),  c("IQR",    "iqr_"), c("SD",      "sd_"),
+  c("CV",      "cv_")
 )
+ws_feature  <- unlist(lapply(stat_defs, function(d) paste0(d[2], channels, "_right")))
+ws_category <- unlist(lapply(stat_defs, function(d) rep(d[1], length(channels))))
 feature_df <- tibble(
   category = c(
-    rep("slope", 7),
-    rep("mean", 7), rep("median", 7), rep("minimum", 7), rep("maximum", 7),
-    rep("IQR", 7), rep("SD", 7), rep("CV", 7),
-    rep("cross-correlation", 3)
+    rep("slope", length(channels)),
+    ws_category,
+    rep("axis cross-correlation", 3),
+    "categorical (arm) dummy",
+    rep("categorical (meal) dummy", 3),
+    rep("categorical (food) dummy", 12)
   ),
-  feature = feature_names
+  feature = c(
+    channels,
+    ws_feature,
+    "cor_xy", "cor_yz", "cor_zx",
+    "arm_b",
+    paste0("meal_X0", 2:4),
+    paste0("food_X", sprintf("%02d", 2:13))
+  )
 )
 write_csv(feature_df, file.path(OUT, "feature_list.csv"))
 cat("Saved: feature_list.csv (", nrow(feature_df), "features)\n\n")
